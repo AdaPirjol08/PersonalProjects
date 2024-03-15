@@ -1,0 +1,47 @@
+//uni porject for Microprocessors with LCD thermometer
+
+#include <Wire.h>
+#include <LCD_I2C.h>
+#define  MCP A2
+#define RED 7
+#define GREEN 6
+float MCP_value;
+float voltage;
+float tempc;
+// Set the LCD address to 0x27 for a 16 chars and 2 line display
+LCD_I2C lcd(0x27, 16, 2);
+void setup() {
+  // initialize the LCD
+  lcd.begin();
+  // Turn on the blacklight and print a message.
+  lcd.backlight();
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  lcd.setCursor(0, 0);
+  lcd.print(" Digital ");
+  lcd.setCursor(0, 1);
+  lcd.print(" Thermometer ");
+  delay(3000);
+  lcd.clear();
+}
+void loop() {
+  MCP_value = analogRead(MCP);
+  voltage = (MCP_value * 5) / 1024.0;
+  tempc = voltage - 0.54;
+  tempc = tempc / 0.01;
+  /*------Display Result------*/
+  lcd.setCursor(2, 0);
+  lcd.print("Temperature");
+  lcd.setCursor(4, 1);
+  lcd.print(tempc);
+  lcd.print("C");
+  //Condition
+  if (tempc > 26) {  // here you can change the temperature threshold value of led changes
+    digitalWrite(RED, HIGH);
+    digitalWrite(GREEN, LOW);
+  } else {
+    digitalWrite(GREEN, HIGH);
+    digitalWrite(RED, LOW);
+  }
+  delay(1000);
+}
